@@ -6,12 +6,12 @@ from .serializers import TaskSerializer
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = TaskSerializer
 
-    '''def get_queryset(self):
-        return self.request.user.leads.all()
+    def get_queryset(self):
+        return self.request.user.tasks.all()
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)'''
+        serializer.save(owner=self.request.user)

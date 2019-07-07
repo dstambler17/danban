@@ -5,7 +5,7 @@ import {Redirect} from 'react-router-dom'
 
 class LoginForm extends Component {
   state = {
-    email: '',
+    username: '',
     password: ''
   }
   handleChange = (e) => {
@@ -16,19 +16,18 @@ class LoginForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(this.state);
-    //this.props.signIn(this.state)
+    this.props.signIn(this.state.username, this.state.password)
   }
   render() {
-    //const {authError, auth} = this.props
-    //if (auth.uid) return <Redirect to='/'/>
+    if (this.props.isAuthenticated) return <Redirect to='/'/>
     return (
       <div className="field container is-box">
         <form className="is-form" onSubmit={this.handleSubmit}>
           <h5 className="is-size-4 is-center">Log In</h5>
-          
+
           <div className="field">
           <p className="control">
-            <input type="email" id='email' className="input is-shorter" placeholder="Email" onChange={this.handleChange} />
+            <input type="text" id='username' className="input is-shorter" placeholder="username" onChange={this.handleChange} />
             </p>
           </div>
 
@@ -49,18 +48,15 @@ class LoginForm extends Component {
   }
 }
 
-/*const mapStateToProps = (state) => {
+const mapStateToProps = (state) => {
   return{
-    authError: state.auth.authError,
-    auth: state.firebase.auth
+    isAuthenticated: state.auth.isAuthenticated
   }
 }
-
 const mapDispatchToProps = (dispatch) => {
   return {
-    signIn: (creds) => dispatch(signIn(creds))
+    signIn: (creds, pass) => dispatch(signIn(creds, pass))
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)*/
-export default LoginForm
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)

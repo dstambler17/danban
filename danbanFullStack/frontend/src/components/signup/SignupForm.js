@@ -5,6 +5,7 @@ import {signUp} from '../../actions/authActions'
 
 class SignUpForm extends Component {
   state = {
+    username: '',
     email: '',
     password: '',
     firstName: '',
@@ -18,16 +19,21 @@ class SignUpForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(this.state);
-    //this.props.signUp(this.state)
+    this.props.signUp(this.state)
   }
   render() {
-    //const {auth, authError} = this.props
-    //if (auth.uid) return <Redirect to='/'/>
+    if (this.props.isAuthenticated) return <Redirect to='/'/>
     return (
         <div className="field container is-box">
         <form className="is-form" onSubmit={this.handleSubmit}>
           <h5 className="is-size-4 is-center">Sign Up</h5>
-          
+
+          <div className="field">
+          <p className="control">
+            <input type="text" id='username' className="input is-shorter" placeholder="Email" onChange={this.handleChange} />
+            </p>
+          </div>
+
           <div className="field">
           <p className="control">
             <input type="email" id='email' className="input is-shorter" placeholder="Email" onChange={this.handleChange} />
@@ -63,18 +69,16 @@ class SignUpForm extends Component {
   }
 }
 
-/*const mapStateToProps = (state) => {
+const mapStateToProps = (state) => {
   return {
-    auth: state.firebase.auth,
-    authError: state.auth.authError
+    isAuthenticated: state.auth.isAuthenticated
   }
-} **/
+}
 
-/*const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    signUp : (newUser) => dispatch(signUp(newUser))
+    signUp : (creds) => dispatch(signUp(creds))
   }
-} */
+}
 
-//export default connect(mapStateToProps,mapDispatchToProps)(SignUpForm)
-export default SignUpForm
+export default connect(mapStateToProps,mapDispatchToProps)(SignUpForm)

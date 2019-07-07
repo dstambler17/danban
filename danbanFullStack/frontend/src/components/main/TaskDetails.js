@@ -5,7 +5,7 @@ import {closeModal} from '../../actions/ideaActions'
 const TaskDetails = (props) => {
     const showHideClassName = props.show ? "modal display-block" : "modal display-none";
   return (
-    <div id="my-modal" class={showHideClassName}>
+    <div id="my-modal" className={showHideClassName}>
     <div className="modal-content">
       <div className="modal-header">
         <span> <button className="negate-button close" onClick={props.closeModal}>&times;</button></span>
