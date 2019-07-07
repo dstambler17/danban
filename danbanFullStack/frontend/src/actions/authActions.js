@@ -1,48 +1,111 @@
-export const signIn = (credentials) => {
-    return (dispatch, getState, {getFirebase}) => {
-      const firebase = getFirebase();
-      
-      firebase.auth().signInWithEmailAndPassword(
-        credentials.email,
-        credentials.password
-      ).then(() => {
-        dispatch({ type: 'LOGIN_SUCCESS' });
-      }).catch((err) => {
-        dispatch({ type: 'LOGIN_ERROR', err });
-      });
-  
-    }
-}
+import axios from "axios";
 
-export const signOut = () => {
-    return (dispatch, getState, {getFirebase}) => {
-      const firebase = getFirebase();
-  
-      firebase.auth().signOut().then(() => {
-        dispatch({ type: 'LOGOUT_SUCCESS' })
+// CHECK TOKEN & LOAD USER
+export const loadUser = () => (dispatch, getState) => {
+  // User Loading
+  dispatch({ type: USER_LOADING });
+
+  axios
+    .get("/api/auth/user", tokenConfig(getState))
+    .then(res => {
+      dispatch({
+        type: "USER_LOADED",
+        payload: res.data
       });
+    })
+    .catch(err => {
+      dispatch({
+        type: "AUTH_ERROR"
+      });
+    });
+};
+
+// LOGIN USER
+export const signIn = (username, password) => dispatch => {
+  // Headers
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
     }
+  };
+
+  // Request Body
+  const body = JSON.stringify({ username, password });
+  console.log(body)
+  axios
+    .post("/api/auth/login", body, config)
+    .then(res => {
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: "LOGIN_FAIL"
+      });
+    });
+};
+
+// REGISTER USER
+export const signUp = ({ username, password, email }) => dispatch => {
+  // Headers
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+
+  // Request Body
+  const body = JSON.stringify({ username, email, password });
+  console.log(body)
+
+  axios
+    .post("/api/auth/register", body, config)
+    .then(res => {
+      dispatch({
+        type: "REGISTER_SUCCESS",
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: "REGISTER_FAIL"
+      });
+    });
+};
+
+// LOGOUT USER
+export const signOut = () => (dispatch, getState) => {
+  axios
+    .post("/api/auth/logout/", null, tokenConfig(getState))
+    .then(res => {
+      dispatch({ type: 'CLEAR_LEADS' });
+      dispatch({
+        type: "LOGOUT_SUCCESS"
+      });
+    })
+    .catch(err => {
+      console.log("Logout failed")
+    });
+};
+
+// Setup config with token - helper function
+export const tokenConfig = getState => {
+  // Get token from state
+  const token = getState().auth.token;
+
+  // Headers
+  const config = {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  };
+
+  // If token, add to headers config
+  if (token) {
+    config.headers["Authorization"] = `Token ${token}`;
   }
 
-
-  export const signUp = (newUser) => {
-    return (dispatch, getState, {getFirebase, getFirestore}) => {
-      const firebase = getFirebase();
-      const firestore = getFirestore();
-  
-      firebase.auth().createUserWithEmailAndPassword(
-        newUser.email, 
-        newUser.password
-      ).then(resp => {
-        return firestore.collection('users').doc(resp.user.uid).set({
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          initials: newUser.firstName[0] + newUser.lastName[0]
-        });
-      }).then(() => {
-        dispatch({ type: 'SIGNUP_SUCCESS' });
-      }).catch((err) => {
-        dispatch({ type: 'SIGNUP_ERROR', err});
-      });
-    }
-  }
+  return config;
+};

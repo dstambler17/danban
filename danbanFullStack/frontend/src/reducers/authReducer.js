@@ -1,44 +1,48 @@
-const initState = {
-    authError: null
-}
+const initialState = {
+  token: localStorage.getItem("token"),
+  isAuthenticated: null,
+  isLoading: false,
+  user: null
+};
 
-const authReducer = (state = initState, action) => {
-    switch(action.type){
-        case 'LOGIN_ERROR':
-          console.log('login error');
-          return {
-            ...state,
-            authError: 'Login failed'
-          }
-    
-        case 'LOGIN_SUCCESS':
-          console.log('login success');
-          return {
-            ...state,
-            authError: null
-          }
-    
-        case 'LOGOUT_SUCCESS':
-          console.log('logout success');
-          return state;
-    
-        case 'SIGNUP_SUCCESS':
-          console.log('signup success')
-          return {
-            ...state,
-            authError: null
-          }
-    
-        case 'SIGNUP_ERROR':
-          console.log('signup error')
-          return {
-            ...state,
-            authError: action.err.message
-          }
-    
-        default:
-          return state
-      }
+const authReducer = function(state = initialState, action) {
+  switch (action.type) {
+    case 'USER_LOADING':
+      return {
+        ...state,
+        isLoading: true
+      };
+    case 'USER_LOADED':
+      return {
+        ...state,
+        isAuthenticated: true,
+        isLoading: false,
+        user: action.payload
+      };
+    case 'LOGIN_SUCCESS':
+    case 'REGISTER_SUCCESS':
+      localStorage.setItem("token", action.payload.token);
+      return {
+        ...state,
+        ...action.payload,
+        isAuthenticated: true,
+        isLoading: false
+      };
+    case 'AUTH_ERROR':
+    case 'LOGIN_FAIL':
+    case 'LOGOUT_SUCCESS':
+    case 'REGISTER_FAIL':
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        token: null,
+        user: null,
+        isAuthenticated: false,
+        isLoading: false
+      };
+    default:
+      return state;
+  }
 }
 
 export default authReducer

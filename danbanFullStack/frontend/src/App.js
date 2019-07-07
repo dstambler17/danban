@@ -4,21 +4,22 @@ import Navbar from './components/Nav/Navbar'
 import MainBody from './components/main/MainBody'
 import LoginForm from './components/signup/LoginForm'
 import SignupForm from './components/signup/SignupForm'
+import PrivateRoute from './components/main/PrivateRoute'
 
 class App extends Component {
   render () {
     return (
       <BrowserRouter>
-      
+
         <div className="App">
           <Navbar/>
           <Switch>
-            <Route exact path = '/' component = {MainBody}/>
+            <PrivateRoute exact path="/" component={MainBody} />
             <Route path ='/login' component = {LoginForm}/>
             <Route path ='/signup' component = {SignupForm}/>
           </Switch>
         </div>
-        
+
       </BrowserRouter>
     );
   }

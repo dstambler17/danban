@@ -10,29 +10,30 @@ const Navbar = (props) => {
 
             // Get all "navbar-burger" elements
             const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-          
+
             // Check if there are any navbar burgers
             if ($navbarBurgers.length > 0) {
-          
+
               // Add a click event on each of them
               $navbarBurgers.forEach( el => {
                 el.addEventListener('click', () => {
-          
+
                   // Get the target from the "data-target" attribute
                   const target = el.dataset.target;
                   const $target = document.getElementById(target);
-          
+
                   // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
                   el.classList.toggle('is-active');
                   $target.classList.toggle('is-active');
-          
+
                 });
               });
             }
-          
+
           });
     }
-    //const links = auth.uid ? <SignedInLinks /> : <SignedOutLinks />
+
+    const links = props.isAuthenticated ? <SignedInLinks username = {props.user}/> : <SignedOutLinks />
     return (
         <nav className="navbar is-info" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
@@ -47,19 +48,16 @@ const Navbar = (props) => {
             <div id="navbarBasicExample" className="navbar-menu">
                 <div className="navbar-end">
                     {burger()}
-                    <SignedInLinks />
-                    <SignedOutLinks />
+                    {links}
                 </div>
             </div>
         </nav>
     )
 }
 
-/** const mapStateToProps = (state) => {
-    return{
-        auth: state.firebase.auth
-    }
-} */
+const mapStateToProps = state => ({
+  user: state.auth.user,
+  isAuthenticated: state.auth.isAuthenticated
+});
 
-export default(Navbar)
-//export default connect(mapStateToProps)(Navbar)
+export default connect(mapStateToProps)(Navbar)

@@ -29,7 +29,7 @@ const taskItemReducer = (state = initState, action) => {
                 ideas: [...state.ideas, action.result]
             }
         case 'ADD_TASK':
-          const newIdea = {title: action.title, box: 1, id: action.id}
+          const newIdea = {title: action.title, box: 1, id: action.id, owner: action.owner}
           let newList = [...state.ideas, newIdea]
           return {
             ...state,
@@ -44,10 +44,13 @@ const taskItemReducer = (state = initState, action) => {
                 ideas: listNoItem
             }
         case 'GET_TASKS':
+        console.log(action.tasks)
           return {
             ...state,
             ideas: action.tasks
           }
+        case 'NOT_ALLOWED':
+          return state
         case 'SHOW_MODAL':
             return {
                 ...state,

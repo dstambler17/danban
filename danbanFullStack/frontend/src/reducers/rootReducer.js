@@ -4,6 +4,7 @@ import {combineReducers} from 'redux'
 
 const rootReducer = combineReducers({
     taskItem: taskItemReducer,
+    auth: authReducer
 })
 
 export default rootReducer
